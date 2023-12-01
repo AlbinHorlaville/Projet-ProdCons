@@ -4,18 +4,18 @@ import java.util.concurrent.Semaphore;
 
 public class ProdConsBuffer implements IProdConsBuffer {
 
-	int in; 		  // Indice d'insertion (producer)
-	int out;		  // Indice de retrait (consommateur)
-	int totMessage;   // Nombre demessage rentré dans le buffer depuis le début
-	int nbMessage;		  // Nombre de message dans le buffer
-	
+	int in; // Indice d'insertion (producer)
+	int out; // Indice de retrait (consommateur)
+	int totMessage; // Nombre demessage rentré dans le buffer depuis le début
+	int nbMessage; // Nombre de message dans le buffer
+
 	Semaphore notFull;
 	Semaphore notEmpty;
 	Semaphore mutexIn;
 	Semaphore mutexOut;
 
-	int bufferSz;	  // Taille du buffer
-	Message buffer[]; 
+	int bufferSz; // Taille du buffer
+	Message buffer[];
 
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -24,10 +24,10 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		this.out = 0;
 		this.totMessage = 0;
 		this.nbMessage = 0;
-		this.notEmpty = new Semaphore(0,true);
-		this.notFull = new Semaphore(bufferSz,true);
-		this.mutexIn = new Semaphore(1,true);  // un seul thread pourra poser une un msg
-		this.mutexOut = new Semaphore(1,true); // un seul thread pourra prendre un msg
+		this.notEmpty = new Semaphore(0, true);
+		this.notFull = new Semaphore(bufferSz, true);
+		this.mutexIn = new Semaphore(1, true); // Verrou du producer : un seul thread pourra poser une un msg
+		this.mutexOut = new Semaphore(1, true); // Verrou du consumer : un seul thread pourra prendre un msg
 	}
 
 	/* put */
@@ -36,17 +36,17 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		// TODO Auto-generated method stub
 
 		// Wait until buffer not full
-		notFull.acquire();  // On prend un ressource
-		mutexIn.acquire();  // On met un verrou
+		notFull.acquire(); // On prend un ressource
+		mutexIn.acquire(); // On met un verrou
 
 		buffer[in] = m; // On ajoute le msg au buffer
 		in = (in + 1) % bufferSz; // On change l'indice du buffer
 
-		totMessage ++;
-		nbMessage ++;
-		
-		mutexIn.release();  // On libère le verroou
-		notEmpty.release();  // On libère une ressource
+		totMessage++;
+		nbMessage++;
+
+		mutexIn.release(); // On libère le verroou
+		notEmpty.release(); // On libère une ressource
 
 	}
 
@@ -62,11 +62,11 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		out = (out + 1) % bufferSz;
 
 		// One more not empty entry
-		nbMessage --;
-		
+		nbMessage--;
+
 		mutexOut.release();
 		notFull.release();
-		
+
 		return m;
 
 	}

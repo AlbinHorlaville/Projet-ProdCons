@@ -38,13 +38,6 @@ public class TestProdCons {
 			tabCons.add(new Consumer(i + 1, buffer, consTime));
 		}
 
-		for (int i = 0; i < nProd; i++) {
-			tabProd.get(i).join();
-		}
-
-		for (int i = 0; i < nCons; i++) {
-			tabCons.get(i).join();
-		}
 
 		System.out.println("Total Messages Produuits: " + buffer.totmsg());
 
