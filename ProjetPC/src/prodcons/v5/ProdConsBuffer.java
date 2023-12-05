@@ -75,7 +75,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	public synchronized Message[] get(int k) throws InterruptedException {
 
 		Message[] messages = new Message[k];
-		mutex.acquire();
+
 		try {
 			for (int i = 0; i < k; i++) {
 
@@ -91,7 +91,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 			}
 			notifyAll();
 		} catch (InterruptedException e) {}
-		mutex.release();
+		
 
 		return messages;
 

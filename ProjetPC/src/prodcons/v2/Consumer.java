@@ -2,31 +2,28 @@ package prodcons.v2;
 
 public class Consumer extends Thread {
 
-	public int id;
+	public long id;
 	public ProdConsBuffer buffer;
 	public int consTime;
 
 	public Consumer(int id, ProdConsBuffer buffer, int consTime) {
-		this.id = id;
+		this.id = this.getId();
 		this.buffer = buffer;
 		this.consTime = consTime;
 		this.start();
 	}
 
 	public void run() {
-		try {
-			while (buffer.totmsg() !=  buffer.nbConsome ) {
-				System.out.println("En attend de conso");
+		while (buffer.totmsg() != buffer.nbConsome) {
+			try {
 				Message message = buffer.Consume();
-				System.out.println("Consumer " + id + " --->: " + message.mess);
-				Thread.sleep(consTime);
+				System.out.println(
+						"Consumer n°" + this.getId() + " consomme le message suivant ---->  " + message.getMess());
+				Thread.sleep(consTime); // Simulation du temps de consommation
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
 	}
 
 }
