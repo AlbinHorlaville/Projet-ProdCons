@@ -1,13 +1,18 @@
 package prodcons.v1;
 
 public class Message {
-	
-	public int producerId;
-    public String mess;
+	private String mess;
 
-    public Message(int producerId, String msg) {
-        this.producerId = producerId;
-        this.mess = msg;
-    }
+	public Message(String msg) {
+		this.mess = msg;
+	}
+
+	public String getMess() {
+		return mess;
+	}
+
+	public void setMess(String mess) {
+		this.mess = mess;
+	}
 
 }

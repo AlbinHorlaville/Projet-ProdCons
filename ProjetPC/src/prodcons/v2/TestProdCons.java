@@ -1,4 +1,4 @@
-package prodcons.v1;
+package prodcons.v2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +6,8 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class TestProdCons {
+	
+	public static boolean finished = false;
 	
 	public static void main(String[] argv) throws InvalidPropertiesFormatException, IOException, InterruptedException {
 		
@@ -47,6 +49,20 @@ public class TestProdCons {
 				e.printStackTrace();
 			}
 		}
+		
+		finished = true;
+		
+		
+		for(Consumer c : tabCons) {
+			try {
+				c.join();
+			}catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
 		System.out.println("Total Messages Produits: " + buffer.totmsg());
 
 	}

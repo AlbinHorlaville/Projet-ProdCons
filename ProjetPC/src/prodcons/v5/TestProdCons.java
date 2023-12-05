@@ -1,9 +1,12 @@
 package prodcons.v5;
 
 import java.io.IOException;
+
+
 import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+
 
 public class TestProdCons {
 
@@ -36,6 +39,14 @@ public class TestProdCons {
 
 		for (int i = 0; i < nCons; i++) {
 			tabCons.add(new Consumer(i + 1, buffer, consTime));
+		}
+		
+		for(Producer p : tabProd) {
+			try {
+				p.join();
+			}catch(InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 

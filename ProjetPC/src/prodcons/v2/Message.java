@@ -1,4 +1,4 @@
-package prodcons.v5;
+package prodcons.v2;
 
 public class Message {
 	private String mess;

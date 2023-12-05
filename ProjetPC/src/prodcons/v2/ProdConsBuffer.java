@@ -1,19 +1,18 @@
-package prodcons.v5;
+package prodcons.v2;
 
 import java.util.concurrent.Semaphore;
 
 public class ProdConsBuffer implements IProdConsBuffer {
 
-	int in; // Indice d'insertion (producer)
-	int out; // Indice de retrait (consommateur)
-	int totMessage; // Nombre demessage rentré dans le buffer depuis le début
-	int nbMessage; // Nombre de message dans le buffer
+	int in; 		  // Indice d'insertion (producer)
+	int out;		  // Indice de retrait (consommateur)
+	int totMessage;   // Nombre demessage rentré dans le buffer depuis le début
+	int nbMessage;		  // Nombre de message dans le buffer
 	
-	int nbConsomme;
-	
-	int bufferSz; // Taille du buffer
-	Message buffer[];
-	Semaphore mutex;
+	int nbConsome;
+
+	int bufferSz;	  // Taille du buffer
+	Message buffer[]; 
 
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -21,9 +20,8 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		this.in = 0;
 		this.out = 0;
 		this.totMessage = 0;
-		this.nbConsomme = 0;
+		nbConsome = 0;
 		this.nbMessage = 0;
-		this.mutex = new Semaphore(1, true);
 	}
 
 	/* put */
@@ -32,7 +30,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		// TODO Auto-generated method stub
 
 		// Wait until buffer not full
-		while (!(nmsg() > 0)) { // Garde
+		while (!(nmsg() > 0)) {		// Garde
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -42,10 +40,10 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		buffer[in] = m; // On ajoute le msg au buffer
 		in = (in + 1) % bufferSz; // On change l'indice du buffer
 
-		totMessage++;
-		nbMessage++;
+		totMessage ++;
+		nbMessage ++;
 
-		notifyAll();
+		notifyAll(); 
 
 	}
 
@@ -65,35 +63,10 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		out = (out + 1) % bufferSz;
 
 		// One more not empty entry
-		nbMessage--;
-		notifyAll();
+		nbConsome ++;
+		nbMessage --;
+		notifyAll(); 
 		return m;
-
-	}
-
-	@Override
-	public synchronized Message[] get(int k) throws InterruptedException {
-
-		Message[] messages = new Message[k];
-		mutex.acquire();
-		try {
-			for (int i = 0; i < k; i++) {
-
-				// On attend tant qu'il n'y a rien dans le buffer aka tant qu'il n'y a rien à
-				// lire
-				while (nbMessage < 0) {
-					wait();
-				}
-
-				messages[i] = buffer[out];
-				out = (out + 1) % bufferSz;
-				nbMessage--;
-			}
-			notifyAll();
-		} catch (InterruptedException e) {}
-		mutex.release();
-
-		return messages;
 
 	}
 

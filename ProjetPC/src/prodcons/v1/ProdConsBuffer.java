@@ -4,13 +4,13 @@ import java.util.concurrent.Semaphore;
 
 public class ProdConsBuffer implements IProdConsBuffer {
 
-	int in; 		  // Indice d'insertion (producer)
-	int out;		  // Indice de retrait (consommateur)
-	int totMessage;   // Nombre demessage rentré dans le buffer depuis le début
-	int nbMessage;		  // Nombre de message dans le buffer
+	int in; // Index d'insertion (producer)
+	int out; // Index de retrait (consommateur)
+	int totMessage; // Nombre de message rentré dans le buffer depuis le début
+	int nbMessage; // Nombre de message dans le buffer
 
-	int bufferSz;	  // Taille du buffer
-	Message buffer[]; 
+	int bufferSz; // Taille du buffer
+	Message buffer[];
 
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -21,57 +21,70 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		this.nbMessage = 0;
 	}
 
-	/* put */
+	/**
+	 * Put the message m in the buffer
+	 **/
 	@Override
 	public synchronized void Produce(Message m) throws InterruptedException {
-		// TODO Auto-generated method stub
 
 		// Wait until buffer not full
-		while (!(nmsg() > 0)) {		// Garde
+		while (!(nmsg() > 0)) { // Garde
 			try {
-				wait();
+				wait(); // Le buffer est plein => on attend
 			} catch (InterruptedException e) {
 			}
 		}
 
-		buffer[in] = m; // On ajoute le msg au buffer
+		// Un emplacement est disponible pour déposer le message
+
+		buffer[in] = m; // On place le message dans le buffer
 		in = (in + 1) % bufferSz; // On change l'indice du buffer
 
-		totMessage ++;
-		nbMessage ++;
+		totMessage++; // On incrémente le nombre de message passé dans le buffer de 1
+		nbMessage++; // On incrémente le nombre de message dans le buffer de 1
 
-		notifyAll(); 
+		notifyAll(); // On réveil les potentiels threads en attente
 
 	}
 
-	/* get */
+	/**
+	 * Retrieve a message from the buffer, following a FIFO order (if M1 was put
+	 * before M2, M1 is retrieved before M2)
+	 **/
 	@Override
 	public synchronized Message Consume() throws InterruptedException {
 
 		// Wait until buffer not empty
 		while (!(nbMessage > 0)) { // Garde
 			try {
-				wait();
+				wait(); // Le buffer est vide => on attend
 			} catch (InterruptedException e) {
 			}
 		}
 
-		Message m = buffer[out];
-		out = (out + 1) % bufferSz;
+		Message m = buffer[out]; // On prend le message dans le buffer
+		out = (out + 1) % bufferSz; // On ajuste l'index
 
-		// One more not empty entry
-		nbMessage --;
-		notifyAll(); 
-		return m;
+		nbMessage--; // On décrémente le nombre de message dans le buffer
+		notifyAll(); // On réveil les potentiels les threads en attende
+
+		return m; // On renvoie le message
 
 	}
 
+	/**
+	 * Returns the number of messages currently available in the buffer
+	 **/
 	@Override
 	public int nmsg() {
 		// TODO Auto-generated method stub
 		return bufferSz - nbMessage;
 	}
 
+	/**
+	 * Returns the total number of messages that have been put in the buffer since
+	 * its creation
+	 **/
 	@Override
 	public int totmsg() {
 		// TODO Auto-generated method stub
