@@ -8,9 +8,9 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	int out; // Indice de retrait (consommateur)
 	int totMessage; // Nombre demessage rentré dans le buffer depuis le début
 	int nbMessage; // Nombre de message dans le buffer
-	
+
 	int nbConsomme;
-	
+
 	int bufferSz; // Taille du buffer
 	Message buffer[];
 	Semaphore mutex;
@@ -72,27 +72,30 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	}
 
 	@Override
-	public synchronized Message[] get(int k) throws InterruptedException {
-
+	public Message[] get(int k) throws InterruptedException {
+		mutex.acquire();
 		Message[] messages = new Message[k];
 
-		try {
+		synchronized (this) {
 			for (int i = 0; i < k; i++) {
+				try {
+					// On attend tant qu'il n'y a rien dans le buffer aka tant qu'il n'y a rien à
+					// lire
+					while (nbMessage < 0) {
+						wait();
+					}
 
-				// On attend tant qu'il n'y a rien dans le buffer aka tant qu'il n'y a rien à
-				// lire
-				while (nbMessage < 0) {
-					wait();
+					messages[i] = buffer[out];
+					out = (out + 1) % bufferSz;
+					nbMessage--;
+
+					notifyAll();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-
-				messages[i] = buffer[out];
-				out = (out + 1) % bufferSz;
-				nbMessage--;
 			}
-			notifyAll();
-		} catch (InterruptedException e) {}
-		
-
+		}
+		mutex.release();
 		return messages;
 
 	}
