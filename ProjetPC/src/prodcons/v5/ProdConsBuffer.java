@@ -88,14 +88,14 @@ public class ProdConsBuffer implements IProdConsBuffer {
 					messages[i] = buffer[out];
 					out = (out + 1) % bufferSz;
 					nbMessage--;
-
+					mutex.release();
 					notifyAll();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		mutex.release();
+
 		return messages;
 
 	}

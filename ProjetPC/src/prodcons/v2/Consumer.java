@@ -14,8 +14,10 @@ public class Consumer extends Thread {
 	}
 
 	public void run() {
-		while (buffer.totmsg() != buffer.nbConsome) {
+		while (!buffer.finished || buffer.buffer.length !=0) {
 			try {
+
+
 				Message message = buffer.Consume();
 				System.out.println(
 						"Consumer n°" + this.getId() + " consomme le message suivant ---->  " + message.getMess());

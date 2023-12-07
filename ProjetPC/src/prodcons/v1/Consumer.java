@@ -17,6 +17,7 @@ public class Consumer extends Thread {
 		while (true) {
 			try {
 				Message message = buffer.Consume();
+
 				System.out.println(
 						"Consumer n°" + this.getId() + " consomme le message suivant ---->  " + message.getMess());
 				Thread.sleep(consTime); // Simulation du temps de consommation

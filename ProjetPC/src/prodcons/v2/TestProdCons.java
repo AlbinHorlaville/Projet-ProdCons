@@ -7,7 +7,6 @@ import java.util.Properties;
 
 public class TestProdCons {
 	
-	public static boolean finished = false;
 	
 	public static void main(String[] argv) throws InvalidPropertiesFormatException, IOException, InterruptedException {
 		
@@ -15,7 +14,7 @@ public class TestProdCons {
 		int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd;
 
 		Properties properties = new Properties();
-		properties.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("prodcons/v1/Options.xml"));
+		properties.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("prodcons/v2/Options.xml"));
 
 		nProd = Integer.parseInt(properties.getProperty("nProd"));
 		nCons = Integer.parseInt(properties.getProperty("nCons"));
@@ -50,18 +49,8 @@ public class TestProdCons {
 			}
 		}
 		
-		finished = true;
-		
-		
-		for(Consumer c : tabCons) {
-			try {
-				c.join();
-			}catch(InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		
+		buffer.finished = true;
+				
 		
 		System.out.println("Total Messages Produits: " + buffer.totmsg());
 

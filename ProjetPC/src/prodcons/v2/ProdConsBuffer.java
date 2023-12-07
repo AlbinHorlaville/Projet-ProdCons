@@ -6,7 +6,8 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	int out; // Index de retrait (consommateur)
 	int totMessage; // Nombre de message rentré dans le buffer depuis le début
 	int nbMessage; // Nombre de message dans le buffer
-	int nbConsome;
+	
+	boolean finished;
 
 	int bufferSz; // Taille du buffer
 	Message buffer[];
@@ -18,7 +19,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		this.out = 0;
 		this.totMessage = 0;
 		this.nbMessage = 0;
-		this.nbConsome = 0;
+		this.finished = false;
 	}
 
 	/**
@@ -65,7 +66,6 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		Message m = buffer[out]; // On prend le message dans le buffer
 		out = (out + 1) % bufferSz; // On ajuste l'index
 		
-		nbConsome ++;
 
 		nbMessage--; // On décrémente le nombre de message dans le buffer
 		notifyAll(); // On réveil les potentiels les threads en attende
