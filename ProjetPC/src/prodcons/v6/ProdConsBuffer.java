@@ -11,7 +11,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 
 	int bufferSz; // Taille du buffer
 	Message buffer[];
-	Semaphore mutex;
+	Semaphore fifo;
 
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -20,35 +20,40 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		this.out = 0;
 		this.totMessage = 0;
 		this.nbMessage = 0;
-		this.mutex = new Semaphore(1,true);
+		this.fifo = new Semaphore(1,true);
 	}
 
 	/* get */
 	@Override
-	public synchronized Message Consume() throws InterruptedException {
-
-		// Wait until buffer not empty
-		while (!(nbMessage > 0)) { // Garde
-			try {
-				wait();
-			} catch (InterruptedException e) {
+	public Message Consume() throws InterruptedException {
+		fifo.acquire();
+		Message m;
+		synchronized(this){
+			// Wait until buffer not empty
+			while (!(nbMessage > 0)) { // Garde
+				try {
+					wait();
+				} catch (InterruptedException e) {
+				}
 			}
-		}
 
-		Message m = buffer[out];
-		out = (out + 1) % bufferSz;
+			m = buffer[out];
+			out = (out + 1) % bufferSz;
 
-		// One more not empty entry
-		nbMessage--;
-		notifyAll();
-		// tant qu'il reste le même message à consommer le consommateur attend qu'un autre le consomme
-		while (buffer[out].equals(m)){
-			try {
-				wait();
-			} catch (InterruptedException e) {
+			// One more not empty entry
+			nbMessage--;
+			
+			fifo.release();
+			notifyAll();
+			// tant qu'il reste le même message à consommer le consommateur attend qu'un autre le consomme
+			while (buffer[out].equals(m)){
+				try {
+					wait();
+				} catch (InterruptedException e) {
+				}
 			}
+			notifyAll();
 		}
-		notifyAll();
 		return m;
 	}
 
