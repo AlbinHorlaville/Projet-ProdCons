@@ -8,5 +8,5 @@ How it works :
     - Run TestProdCons
 
 Authors :
-    * Albin Horlaville
-    * Grégory Pititto
+    - Albin Horlaville
+    - Grégory Pititto
