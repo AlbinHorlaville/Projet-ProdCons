@@ -20,12 +20,12 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		this.out = 0;
 		this.totMessage = 0;
 		this.nbMessage = 0;
-		this.fifo = new Semaphore(1,true);
+		this.fifo = new Semaphore(1,true); // Ordre fifo
 	}
 
-	/* get */
 	@Override
-	public Message Consume() throws InterruptedException {
+	public Message get() throws InterruptedException {
+		// Pour l'ordre fifo, on acquire le sémaphore
 		fifo.acquire();
 		Message m;
 		synchronized(this){
@@ -37,6 +37,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 				}
 			}
 
+			// Post garde on récupère le message
 			m = buffer[out];
 			out = (out + 1) % bufferSz;
 
@@ -108,6 +109,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 			}
 		}
 
+		// post garde, on ajoute le message n fois au buffer
 		for (int i = 0; i < n; i++) {
 			buffer[in] = m; // On ajoute le msg au buffer
 			in = (in + 1) % bufferSz; // On change l'indice du buffer

@@ -17,7 +17,7 @@ public interface IProdConsBuffer {
 	 	* following a FIFO order (if M1 was put before M2, M1
 	 	* is retrieved before M2)
 	**/
-	public Message Consume() throws InterruptedException;
+	public Message get() throws InterruptedException;
 	
 
 	

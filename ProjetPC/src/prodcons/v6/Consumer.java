@@ -16,7 +16,7 @@ public class Consumer extends Thread {
 	public void run() {
 		try {
 			while (true) {
-				Message message = buffer.Consume();
+				Message message = buffer.get();
 				System.out.println("  Consumer " + id + " --->: " + message.mess);
 			}
 
