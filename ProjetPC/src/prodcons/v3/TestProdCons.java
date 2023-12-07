@@ -12,7 +12,7 @@ public class TestProdCons {
 		int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd;
 
 		Properties properties = new Properties();
-		properties.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("prodcons/v3/Options.xml"));
+		properties.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("prodcons/v1/Options.xml"));
 
 		nProd = Integer.parseInt(properties.getProperty("nProd"));
 		nCons = Integer.parseInt(properties.getProperty("nCons"));
