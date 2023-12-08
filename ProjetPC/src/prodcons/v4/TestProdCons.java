@@ -41,6 +41,14 @@ public class TestProdCons {
 			tabCons.add(new Consumer(i + 1, buffer, consTime));
 		}
 
+		for (Producer p : tabProd) {
+			try {
+				p.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		System.out.println("Total Messages Produuits: " + buffer.totmsg());
 
 	}
